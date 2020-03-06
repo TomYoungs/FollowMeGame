@@ -1,8 +1,4 @@
 ﻿  CanvasTool.cpp
-c:\users\b9014519\onedrive - sheffield hallam university\visual studio projects\fop4cs-follow-me-game\followmeapp\followmeapp\canvastool.h(23): warning C4091: 'typedef ': ignored on left of 'CanvasTool::orderArr' when no variable is declared
-c:\users\b9014519\onedrive - sheffield hallam university\visual studio projects\fop4cs-follow-me-game\followmeapp\followmeapp\canvastool.cpp(73): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\b9014519\onedrive - sheffield hallam university\visual studio projects\fop4cs-follow-me-game\followmeapp\followmeapp\canvastool.cpp(78): error C2061: syntax error: identifier 'ordeArr'
-  EasyGraphics.cpp
-  main.cpp
-c:\users\b9014519\onedrive - sheffield hallam university\visual studio projects\fop4cs-follow-me-game\followmeapp\followmeapp\canvastool.h(23): warning C4091: 'typedef ': ignored on left of 'CanvasTool::orderArr' when no variable is declared
-  Generating Code...
+C:\Users\tomfy\Documents\gitRepos\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.h(23): warning C4091: 'typedef ': ignored on left of 'CanvasTool::orderArr' when no variable is declared
+C:\Users\tomfy\Documents\gitRepos\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.cpp(73,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FollowMeApp.vcxproj -> C:\Users\tomfy\Documents\gitRepos\FollowMeGame\FollowMeApp\x64\Debug\FollowMeApp.exe

@@ -75,26 +75,31 @@ void CanvasTool::startGame() {
 	while (notGameOver) {//loops through levels 
 		int c_Origin = rand() % 4;//random number in range
 		int r_Origin = rand() % 4;
-		levelCounter = 0;
-		orderArr *currentPathArr = new ordeArr[4];
+		levelCounter = 1;
+		orderArr currentPathArr[20];//todo: vector?
 		pathsArr[r_Origin][c_Origin] = lightTile;//set the origin (todo: use a different asset)
-		for (int i = 0; i < (levelCounter+2); i++) {//loop through tile generator
+		currentPathArr[0].row = r_Origin;
+		currentPathArr[0].column = c_Origin;
+		for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 		
-			drawNewPath(r_Origin, c_Origin);//code the next tile from the origin
+			drawNewPath(r_Origin, c_Origin, currentPathArr, i);//code the next tile from the origin
 		}
 		levelCounter++;
 		onDraw();		
+		orderArr hi = currentPathArr[3];//so i can have a look at the content of the array
 		notGameOver = false;
 	}
 }
 
-void CanvasTool::drawNewPath(int& rO, int& cO) {
+void CanvasTool::drawNewPath(int& rO, int& cO, orderArr cpa[], int i) {
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
 	
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-		
-		if ((rO - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
+		if (cpa[i-1].row == cpa[i].row && cpa[i-1].column == cpa[i].column) {
+			tileChoice = rand() % 4;
+		}
+		else if ((rO - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
 			tileChoice = rand() % 4;
 		}
 		else if((cO + 1 > 3) && (tileChoice == 1)){
@@ -114,19 +119,27 @@ void CanvasTool::drawNewPath(int& rO, int& cO) {
 	case 0:
 		rO--;
 		pathsArr[rO][cO] = lightTile;
-		
+		cpa[i].row = rO;
+		cpa[i].column = cO;
+
 		break;
 	case 1:
 		cO++;
 		pathsArr[rO][cO] = lightTile;
+		cpa[i].row = rO;
+		cpa[i].column = cO;
 		break;
 	case 2:
 		rO++;
 		pathsArr[rO][cO] = lightTile;
+		cpa[i].row = rO;
+		cpa[i].column = cO;
 		break;
 	case 3:
 		cO--;
 		pathsArr[rO][cO] = lightTile;
+		cpa[i].row = rO;
+		cpa[i].column = cO;
 		break;
 	}
 }

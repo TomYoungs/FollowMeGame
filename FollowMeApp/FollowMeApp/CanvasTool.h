@@ -12,7 +12,7 @@ public:
 	int cx = 0, cy = 0;
 	int timerID = 0;
 	int timerCounter = 0;
-	int levelCounter = 0;
+	int levelCounter;
 	const wstring defaultTile = L"assets\\GrayTile.bmp";  //todo: save as 0 and 1s and have an if statement to draw the paths based on which
 	const wstring lightTile = L"assets\\LightTile.bmp";
 	int startBtnC = YELLOW;
@@ -29,7 +29,7 @@ public:
 	virtual void onTimer(UINT nIDEvent);
 	virtual void startBtn();
 	virtual void startGame();
-	virtual void drawNewPath(int& rO, int& cO);
+	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[4], int i);
 	virtual void defaultTileSetter();
 };
 
