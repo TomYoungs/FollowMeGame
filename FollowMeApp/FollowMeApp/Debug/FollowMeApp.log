@@ -1,0 +1,5 @@
+﻿  CanvasTool.cpp
+  main.cpp
+  Generating Code...
+C:\Users\tomfy\OneDrive - Sheffield Hallam University\Visual Studio Projects\FOP4CS-follow-me-game\FollowMeApp\FollowMeApp\CanvasTool.cpp(69,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FollowMeApp.vcxproj -> C:\Users\tomfy\OneDrive - Sheffield Hallam University\Visual Studio Projects\FOP4CS-follow-me-game\FollowMeApp\Debug\FollowMeApp.exe
