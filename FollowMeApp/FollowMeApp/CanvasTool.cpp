@@ -5,6 +5,7 @@ CanvasTool::CanvasTool()
 {
 	setImmediateDrawMode(false);
 	defaultTileSetter();
+	srand(time(NULL));
 }
 
 CanvasTool::~CanvasTool()
@@ -25,6 +26,7 @@ void CanvasTool::onDraw() {
 	}
 	
 	startBtn();
+	levelCounterText();
 	drawText("0.000", 200, 405);
 	EasyGraphics::onDraw();
 }
@@ -34,6 +36,14 @@ void CanvasTool::startBtn() {
 	setTextColour(BLACK);
 	setFont(20, L"Tahoma");
 	drawText("start", 315, 405);
+}
+void CanvasTool::levelCounterText(){
+	setBackColour(LevelCTxtC);
+	drawRectangle(300, 10, 120, 50, true);
+	setTextColour(BLACK);
+	setFont(20, L"Tahoma");
+	string levelCWord = "Level: " + to_string(levelCounter);
+	drawText(levelCWord.c_str(), 315, 15);
 }
 void CanvasTool::defaultTileSetter() {
 	for (int i = 0; i < 4; ++i) {
@@ -70,25 +80,23 @@ void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
 
 
 void CanvasTool::startGame() {
-	srand(time(NULL));
+	
 	bool notGameOver = true;
-	while (notGameOver) {//loops through levels 
-		int c_Origin = rand() % 4;//random number in range
-		int r_Origin = rand() % 4;
-		levelCounter = 1;
-		orderArr currentPathArr[20];//todo: vector?
-		pathsArr[r_Origin][c_Origin] = lightTile;//set the origin (todo: use a different asset)
-		currentPathArr[0].row = r_Origin;
-		currentPathArr[0].column = c_Origin;
-		for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
-		
-			drawNewPath(r_Origin, c_Origin, currentPathArr, i);//code the next tile from the origin
-		}
-		levelCounter++;
-		onDraw();		
-		orderArr hi = currentPathArr[3];//so i can have a look at the content of the array
-		notGameOver = false;
+	int c_Origin = rand() % 4;//random number in range
+	int r_Origin = rand() % 4;
+	orderArr currentPathArr[20];//todo: vector?***********************
+	pathsArr[r_Origin][c_Origin] = startTile;//set the origin
+	currentPathArr[0].row = r_Origin;
+	currentPathArr[0].column = c_Origin;
+	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
+	
+		drawNewPath(r_Origin, c_Origin, currentPathArr, i);//code the next tile from the origin
 	}
+
+	onDraw();		
+	orderArr hi = currentPathArr[3];//so i can have a look at the content of the array***************
+
+	levelCounter++;
 }
 
 void CanvasTool::drawNewPath(int& rO, int& cO, orderArr cpa[], int i) {
