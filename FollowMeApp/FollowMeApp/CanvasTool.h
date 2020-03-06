@@ -29,7 +29,7 @@ public:
 	virtual void onTimer(UINT nIDEvent);
 	virtual void startBtn();
 	virtual void startGame();
-	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[4], int i);
+	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[], int i);
 	virtual void defaultTileSetter();
 };
 
