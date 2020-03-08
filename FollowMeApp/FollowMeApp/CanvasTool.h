@@ -16,6 +16,7 @@ public:
 	const wstring defaultTile = L"assets\\GrayTile.bmp";  //todo: save as 0 and 1s and have an if statement to draw the paths based on which
 	const wstring lightTile = L"assets\\LightTile.bmp";
 	const wstring startTile = L"assets\\start.bmp";
+	const wstring balloonTile = L"assets\\hotAirBalloon.bmp";
 	int startBtnC = YELLOW;
 	int LevelCTxtC = YELLOW;
 	wstring pathsArr[4][4];
@@ -35,6 +36,7 @@ public:
 	virtual void levelCounterText();
 	virtual void startGame();
 	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[], int i);
+	virtual void animatePath(orderArr cpa[]);
 	virtual void defaultTileSetter();
 };
 

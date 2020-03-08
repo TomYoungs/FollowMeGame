@@ -85,16 +85,16 @@ void CanvasTool::startGame() {
 	int c_Origin = rand() % 4;//random number in range
 	int r_Origin = rand() % 4;
 	orderArr currentPathArr[20];//todo: vector?***********************
-	pathsArr[r_Origin][c_Origin] = startTile;//set the origin
+	//pathsArr[r_Origin][c_Origin] = startTile;//set the origin
 	currentPathArr[0].row = r_Origin;
 	currentPathArr[0].column = c_Origin;
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 	
 		drawNewPath(r_Origin, c_Origin, currentPathArr, i);//code the next tile from the origin
 	}
-
-	onDraw();		
-	orderArr hi = currentPathArr[3];//so i can have a look at the content of the array***************
+	onDraw();
+	animatePath(currentPathArr);
+			
 
 	levelCounter++;
 }
@@ -103,6 +103,7 @@ void CanvasTool::drawNewPath(int& rO, int& cO, orderArr cpa[], int i) {
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
 	
+	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
 		if (cpa[i-1].row == cpa[i].row && cpa[i-1].column == cpa[i].column) {
 			tileChoice = rand() % 4;
@@ -150,4 +151,16 @@ void CanvasTool::drawNewPath(int& rO, int& cO, orderArr cpa[], int i) {
 		cpa[i].column = cO;
 		break;
 	}
+}
+
+void CanvasTool::animatePath(orderArr cpa[]) {
+	//take in CPA[] and find the point to have the asset overlay for examble if the origin is at (2,1) the location
+	//of the asset would be (334,267) asset is 65x65 this assets x coord would incroment till it hits the next location
+	//minus 65 (334,334) minus 65 because the asset is tracked from the top left 
+	for (int i = 0; i < levelCounter + 3; i++) {
+		drawBitmap(balloonTile.c_str(), (cpa[i].column * 67 + 200) + i, cpa[i].row * 67 + 100, 65, 65);
+		//todo: delay stuff, may be related to timer so could do that first maybe?
+		EasyGraphics::onDraw();
+	}
+	//todo: could i make this function work with the player also?
 }
