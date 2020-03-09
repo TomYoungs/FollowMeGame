@@ -36,7 +36,8 @@ public:
 	virtual void levelCounterText();
 	virtual void startGame();
 	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[], int i);
-	virtual void animatePath(orderArr cpa[]);
+	virtual void animatePath(int row, int column,int W_E, int N_S);
+	virtual void animatePathValid(orderArr cpa[]);
 	virtual void defaultTileSetter();
 };
 

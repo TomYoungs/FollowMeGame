@@ -1,6 +1,6 @@
 #include "CanvasTool.h"
 #include <time.h>
-
+//make some relivant asserts 
 CanvasTool::CanvasTool()
 {
 	setImmediateDrawMode(false);
@@ -93,8 +93,7 @@ void CanvasTool::startGame() {
 		drawNewPath(r_Origin, c_Origin, currentPathArr, i);//code the next tile from the origin
 	}
 	onDraw();
-	animatePath(currentPathArr);
-			
+	animatePathValid(currentPathArr);
 
 	levelCounter++;
 }
@@ -153,14 +152,42 @@ void CanvasTool::drawNewPath(int& rO, int& cO, orderArr cpa[], int i) {
 	}
 }
 
-void CanvasTool::animatePath(orderArr cpa[]) {
+
+void CanvasTool::animatePathValid(orderArr cpa[]) {
 	//take in CPA[] and find the point to have the asset overlay for examble if the origin is at (2,1) the location
 	//of the asset would be (334,267) asset is 65x65 this assets x coord would incroment till it hits the next location
 	//minus 65 (334,334) minus 65 because the asset is tracked from the top left 
-	for (int i = 0; i < levelCounter + 3; i++) {
-		drawBitmap(balloonTile.c_str(), (cpa[i].column * 67 + 200) + i, cpa[i].row * 67 + 100, 65, 65);
-		//todo: delay stuff, may be related to timer so could do that first maybe?
-		EasyGraphics::onDraw();
+	for (int i = 0; i < levelCounter + 3; i++) {//tile by tile
+
+		const int rowCalc = cpa[i + 1].row - cpa[i].row;
+		const int colCalc = cpa[i + 1].column - cpa[i].column;
+		if (rowCalc == 0) {
+			if (colCalc == -1) {
+				animatePath(cpa[i].row, cpa[i].column, rowCalc, colCalc);//west
+			}
+			else if (colCalc == 1) {
+				animatePath(cpa[i].row, cpa[i].column, rowCalc, colCalc);//east
+			}
+		}
+		else if (colCalc == 0) {
+			if (rowCalc == -1) {
+				animatePath(cpa[i].row, cpa[i].column, rowCalc, colCalc);//north
+			}
+			else if (rowCalc == 1) {
+				animatePath(cpa[i].row, cpa[i].column, rowCalc, colCalc);//south
+			}
+		}
 	}
+}
+
+void CanvasTool::animatePath(int row,int column, int N_S, int W_E) {
+		for (int j = 0; j < 65; j++) {
+			drawBitmap(balloonTile.c_str(), (column * 67 + 200) + j * W_E , (row * 67 + 100) + j * N_S, 65, 65);
+			//todo: delay stuff, may be related to timer so could do that first maybe?
+			EasyGraphics::onDraw();
+		}
+
+	//might need like a position counter in cpa
 	//todo: could i make this function work with the player also?
 }
+
