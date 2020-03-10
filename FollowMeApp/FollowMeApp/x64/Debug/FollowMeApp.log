@@ -1,3 +1,6 @@
 ﻿  CanvasTool.cpp
-C:\Users\tomfy\Documents\gitRepos\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.cpp(8,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  FollowMeApp.vcxproj -> C:\Users\tomfy\Documents\gitRepos\FollowMeGame\FollowMeApp\x64\Debug\FollowMeApp.exe
+  EasyGraphics.cpp
+  main.cpp
+  Generating Code...
+F:\Documents - SanDisk\VS projects\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.cpp(8,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FollowMeApp.vcxproj -> F:\Documents - SanDisk\VS projects\FollowMeGame\FollowMeApp\x64\Debug\FollowMeApp.exe
