@@ -1,4 +1,3 @@
 ﻿  CanvasTool.cpp
-F:\Documents - SanDisk\VS projects\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.h(28): warning C4091: 'typedef ': ignored on left of 'CanvasTool::orderArr' when no variable is declared
-F:\Documents - SanDisk\VS projects\FollowMeGame\FollowMeApp\FollowMeApp\CanvasTool.cpp(8,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  FollowMeApp.vcxproj -> F:\Documents - SanDisk\VS projects\FollowMeGame\FollowMeApp\x64\Debug\FollowMeApp.exe
+c:\users\b9014519\desktop\followmegame\followmegame\followmeapp\followmeapp\canvastool.cpp(8): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  FollowMeApp.vcxproj -> C:\Users\b9014519\Desktop\FollowMeGame\FollowMeGame\FollowMeApp\x64\Debug\FollowMeApp.exe
