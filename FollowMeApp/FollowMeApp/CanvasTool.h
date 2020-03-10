@@ -16,17 +16,17 @@ public:
 	const wstring defaultTile = L"assets\\GrayTile.bmp";  //todo: save as 0 and 1s and have an if statement to draw the paths based on which
 	const wstring lightTile = L"assets\\LightTile.bmp";
 	const wstring startTile = L"assets\\start.bmp";
+	const wstring balloonTile = L"assets\\hotAirBalloon.bmp";
 	int startBtnC = YELLOW;
 	int LevelCTxtC = YELLOW;
 	wstring pathsArr[4][4];
 
-
-	typedef struct orderArr {
+	enum direction { north, east, south, west };
+	
+	struct point {
 		int row;
 		int column;
 	};
-
-
 
 	virtual void onLButtonDown(UINT nFlags, int x, int y);
 	virtual void onDraw();
@@ -34,7 +34,9 @@ public:
 	virtual void startBtn();
 	virtual void levelCounterText();
 	virtual void startGame();
-	virtual void drawNewPath(int& rO, int& cO, orderArr cpa[], int i);
+	virtual void drawNewPath(point& coords, vector<point>& cpa, int i);
+	virtual void animatePath(point coords, int N_S, int W_E);
+	virtual void animatePathValid(vector<point> cpa);
 	virtual void defaultTileSetter();
 };
 

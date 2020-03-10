@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "CanvasTool.h"
 
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdline, int  show)
 {
 	CanvasTool dt;
