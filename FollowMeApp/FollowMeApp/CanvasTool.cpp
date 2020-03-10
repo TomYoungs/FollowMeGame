@@ -44,6 +44,7 @@ void CanvasTool::levelCounterText(){
 	drawText(levelCWord.c_str(), 315, 15);
 }
 void CanvasTool::defaultTileSetter() {
+	
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			pathsArr[i][j] = defaultTile;
@@ -80,9 +81,7 @@ void CanvasTool::startGame() {
 	point OriginGen; 
 	 OriginGen.row = rand() % 4;//random number in range
 	 OriginGen.column = rand() % 4;
-	//orderArr currentPathArr[20];//todo: vector?***********************
 	vector<point> currentPathArr;
-	//pathsArr[r_Origin][c_Origin] = startTile;//set the origin
 	currentPathArr.push_back(OriginGen);
 	
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
@@ -94,19 +93,19 @@ void CanvasTool::startGame() {
 
 	levelCounter++;
 }
-void CanvasTool::drawNewPath(point& coords, vector<point> cpa, int i) {//todo: enum
+void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {//todo: enum
 	
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-		if (cpa.size() > 1) {
-			if (cpa[i - 1].row == cpa[i].row && cpa[i - 1].column == cpa[i].column) {
+			if (cpa.size() > 1) {
+				if (cpa[i - 1].row == cpa[i].row && cpa[i - 1].column == cpa[i].column) {
 				tileChoice = rand() % 4;
+				}
 			}
-		}
-			else if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
+			if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
 				tileChoice = rand() % 4;
 			}
 			else if ((coords.column + 1 > 3) && (tileChoice == 1)) {
@@ -124,22 +123,22 @@ void CanvasTool::drawNewPath(point& coords, vector<point> cpa, int i) {//todo: e
 		
 		}
 	switch (tileChoice) {
-	case 0:
+	case north:
 		coords.row--;
 		pathsArr[coords.row][coords.column] = lightTile;
 		cpa.push_back(coords);
 		break;
-	case 1:
+	case east:
 		coords.column++;
 		pathsArr[coords.row][coords.column] = lightTile;
 		cpa.push_back(coords);
 		break;
-	case 2:
+	case south:
 		coords.row++;
 		pathsArr[coords.row][coords.column] = lightTile;
 		cpa.push_back(coords);
 		break;
-	case 3:
+	case west:
 		coords.column--;
 		pathsArr[coords.row][coords.column] = lightTile;
 		cpa.push_back(coords);
@@ -171,8 +170,7 @@ void CanvasTool::animatePathValid(vector<point> cpa) {
 		}
 	}
 }
-
-void CanvasTool::animatePath(point coords, int N_S, int W_E) {
+void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 		for (int j = 0; j < 65; j++) {
 			drawBitmap(balloonTile.c_str(), (coords.column * 67 + 200) + j * W_E , (coords.row * 67 + 100) + j * N_S, 65, 65);
 			//todo: delay stuff, may be related to timer so could do that first maybe?

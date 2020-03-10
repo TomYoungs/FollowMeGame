@@ -21,7 +21,8 @@ public:
 	int LevelCTxtC = YELLOW;
 	wstring pathsArr[4][4];
 
-
+	enum direction { north, east, south, west };
+	
 	struct point {
 		int row;
 		int column;
@@ -33,7 +34,7 @@ public:
 	virtual void startBtn();
 	virtual void levelCounterText();
 	virtual void startGame();
-	virtual void drawNewPath(point& Coords, vector<point> cpa, int i);
+	virtual void drawNewPath(point& coords, vector<point>& cpa, int i);
 	virtual void animatePath(point coords, int N_S, int W_E);
 	virtual void animatePathValid(vector<point> cpa);
 	virtual void defaultTileSetter();
