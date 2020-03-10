@@ -17,12 +17,7 @@ void CanvasTool::onDraw() {
 
 	clearScreen(WHITE);
 
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-				drawBitmap(pathsArr[j][i].c_str(), i * 67 + 200, j * 67 + 100, 65, 65);
-		}
-	}
-	
+	gridDrawer();
 	startBtn();
 	levelCounterText();
 	drawText("0.000", 200, 405);
@@ -45,9 +40,27 @@ void CanvasTool::levelCounterText(){
 }
 void CanvasTool::defaultTileSetter() {
 	
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
+	for (int i = 0; i < 6; ++i) {
+		for (int j = 0; j < 6; ++j) {
 			pathsArr[i][j] = defaultTile;
+		}
+	}
+}
+void CanvasTool::gridDrawer() {
+	int gridSize = 4;
+
+	if (levelCounter > 4) {
+		gridSize = 5;
+		gridDim = 52;
+		if (levelCounter > 9) {
+			gridDim = 43;
+			gridSize = 6;
+		}
+	}
+	
+	for (int i = 0; i < gridSize; i++) {
+		for (int j = 0; j < gridSize; j++) {
+			drawBitmap(pathsArr[j][i].c_str(), i * (gridDim + 2) + 200, j * (gridDim + 2) + 100, gridDim, gridDim);
 		}
 	}
 }
@@ -100,11 +113,13 @@ void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {//todo: 
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-			if (cpa.size() > 1) {
+	/*		if (cpa.size() > 1) { 
+								  !!!	this validation dosen't work it was meant to test the immediately after thing but i can't think how
+										to get this to work without having an entire extra switch statement like the one below.		!!!  
 				if (cpa[i - 1].row == cpa[i].row && cpa[i - 1].column == cpa[i].column) {
 				tileChoice = rand() % 4;
 				}
-			}
+			}*/
 			if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
 				tileChoice = rand() % 4;
 			}
@@ -172,9 +187,11 @@ void CanvasTool::animatePathValid(vector<point> cpa) {
 }
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 		for (int j = 0; j < 65; j++) {
-			drawBitmap(balloonTile.c_str(), (coords.column * 67 + 200) + j * W_E , (coords.row * 67 + 100) + j * N_S, 65, 65);
+			//clear asset
+			drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
 			//todo: delay stuff, may be related to timer so could do that first maybe?
-			EasyGraphics::onDraw();//remove
+			//remove
+			EasyGraphics::onDraw();
 		}
 
 	//might need like a position counter in cpa

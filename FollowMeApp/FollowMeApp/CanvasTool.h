@@ -19,8 +19,8 @@ public:
 	const wstring balloonTile = L"assets\\hotAirBalloon.bmp";
 	int startBtnC = YELLOW;
 	int LevelCTxtC = YELLOW;
-	wstring pathsArr[4][4];
-
+	int gridDim = 65;
+	wstring pathsArr[6][6];
 	enum direction { north, east, south, west };
 	
 	struct point {
@@ -38,6 +38,7 @@ public:
 	virtual void animatePath(point coords, int N_S, int W_E);
 	virtual void animatePathValid(vector<point> cpa);
 	virtual void defaultTileSetter();
+	virtual void gridDrawer();
 };
 
 
