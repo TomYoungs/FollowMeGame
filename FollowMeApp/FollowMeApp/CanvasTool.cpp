@@ -47,7 +47,6 @@ void CanvasTool::defaultTileSetter() {
 	}
 }
 void CanvasTool::gridDrawer() {
-	int gridSize = 4;
 
 	if (levelCounter > 4) {
 		gridSize = 5;
@@ -92,8 +91,8 @@ void CanvasTool::startGame() {
 	
 	bool notGameOver = true;
 	point OriginGen; 
-	 OriginGen.row = rand() % 4;//random number in range
-	 OriginGen.column = rand() % 4;
+	 OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
+	 OriginGen.column = rand() % (4 + (gridSize - 4));
 	vector<point> currentPathArr;
 	currentPathArr.push_back(OriginGen);
 	
@@ -123,10 +122,10 @@ void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {//todo: 
 			if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
 				tileChoice = rand() % 4;
 			}
-			else if ((coords.column + 1 > 3) && (tileChoice == 1)) {
+			else if ((coords.column + 1 >= gridSize) && (tileChoice == 1)) {
 				tileChoice = rand() % 4;
 			}
-			else if ((coords.row + 1 > 3) && (tileChoice == 2)) {
+			else if ((coords.row + 1 >= gridSize) && (tileChoice == 2)) {
 				tileChoice = rand() % 4;
 			}
 			else if ((coords.column - 1 < 0) && (tileChoice == 3)) {
@@ -186,7 +185,7 @@ void CanvasTool::animatePathValid(vector<point> cpa) {
 	}
 }
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
-		for (int j = 0; j < 65; j++) {
+		for (int j = 0; j < (gridDim +2); j++) {
 			//clear asset
 			drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
 			//todo: delay stuff, may be related to timer so could do that first maybe?
