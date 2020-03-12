@@ -27,6 +27,7 @@ public:
 	struct point {
 		int row;
 		int column;
+		int direction;
 	};
 
 	virtual void onLButtonDown(UINT nFlags, int x, int y);
