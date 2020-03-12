@@ -93,6 +93,7 @@ void CanvasTool::startGame() {
 	point OriginGen; 
 	 OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
 	 OriginGen.column = rand() % (4 + (gridSize - 4));
+	 OriginGen.direction = -1; //can you do this with enum?
 	vector<point> currentPathArr;
 	currentPathArr.push_back(OriginGen);
 	
@@ -105,22 +106,18 @@ void CanvasTool::startGame() {
 
 	levelCounter++;
 }
-void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {//todo: enum
+void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {
 	
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-	/*		if (cpa.size() > 1) { 
-								  !!!	this validation dosen't work it was meant to test the immediately after thing but i can't think how
-										to get this to work without having an entire extra switch statement like the one below.		!!!  
-				if (cpa[i - 1].row == cpa[i].row && cpa[i - 1].column == cpa[i].column) {
+			if (cpa[i].direction == (tileChoice+2)) {
 				tileChoice = rand() % 4;
-				}
-			}*/
-			if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
-				tileChoice = rand() % 4;
+			}
+			else if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
+				
 			}
 			else if ((coords.column + 1 >= gridSize) && (tileChoice == 1)) {
 				tileChoice = rand() % 4;
@@ -136,11 +133,14 @@ void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {//todo: 
 			}
 		
 		}
+	coords.direction = tileChoice;
+
 	switch (tileChoice) {
 	case north:
 		coords.row--;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpa.push_back(coords);
+		cpa.push_back({ coords.row,coords.column, tileChoice });
+		
 		break;
 	case east:
 		coords.column++;
