@@ -5,7 +5,6 @@ CanvasTool::CanvasTool()
 {
 	setImmediateDrawMode(false);
 	defaultTileSetter();
-	srand(time(NULL));
 }
 
 CanvasTool::~CanvasTool()
@@ -13,8 +12,6 @@ CanvasTool::~CanvasTool()
 }
 
 void CanvasTool::onDraw() {
-
-
 	clearScreen(WHITE);
 
 	gridDrawer();
@@ -64,13 +61,12 @@ void CanvasTool::gridDrawer() {
 		}
 	}
 }
-void CanvasTool::onTimer(UINT nIDEvent)
+void wait(DWORD interval)
 {
-	if (nIDEvent == timerID)
-	{
-		timerCounter++;
+	DWORD startTime = GetTickCount();
 
-		//logic to check if solved
+	while (GetTickCount() < (startTime + interval)) {
+		//wait for a bit
 	}
 }
 void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
@@ -90,7 +86,7 @@ void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
 	 
 }
 void CanvasTool::startGame() {
-	
+	srand((unsigned int)time(NULL));
 	bool notGameOver = true;
 	point OriginGen; 
 	 OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
@@ -101,14 +97,14 @@ void CanvasTool::startGame() {
 	
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 	
-		drawNewPath(OriginGen, currentPathArr, i);//code the next tile from the origin
+		createNewPath(OriginGen, currentPathArr, i);//code the next tile from the origin
 	}
 	onDraw();
 	animatePathValid(currentPathArr);
 
 	levelCounter++;
 }
-void CanvasTool::drawNewPath(point& coords, vector<point>& cpa, int i) {
+void CanvasTool::createNewPath(point& coords, vector<point>& cpa, int i) {
 	
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
@@ -185,15 +181,25 @@ void CanvasTool::animatePathValid(vector<point> cpa) {
 			}
 		}
 	}
+
 }
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
-		for (int j = 0; j < (gridDim +2); j++) {
-			//clear asset
-			drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
-			//todo: delay stuff, may be related to timer so could do that first maybe?
-			//remove
-			EasyGraphics::onDraw();
+	int solutionTime = 500;
+	int timer;
+	int counter = 0;
+	DWORD interval = 20;
+	DWORD start = GetTickCount();
+
+	for (int j = 0; j < (gridDim + 2); j++) {
+		//clear asset
+		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
+		//todo: delay stuff, may be related to timer so could do that first maybe?
+		//remove
+		for (timer = 0; timer < solutionTime; timer += interval) {
+			wait(interval);
 		}
+		EasyGraphics::onDraw();
+	}
 
 	//might need like a position counter in cpa
 	//todo: could i make this function work with the player also?

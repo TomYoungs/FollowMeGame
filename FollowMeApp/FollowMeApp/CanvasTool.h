@@ -29,14 +29,12 @@ public:
 		int column;
 		int direction;
 	};
-
 	virtual void onLButtonDown(UINT nFlags, int x, int y);
 	virtual void onDraw();
-	virtual void onTimer(UINT nIDEvent);
 	virtual void startBtn();
 	virtual void levelCounterText();
 	virtual void startGame();
-	virtual void drawNewPath(point& coords, vector<point>& cpa, int i);
+	virtual void createNewPath(point& coords, vector<point>& cpa, int i);
 	virtual void animatePath(point coords, int N_S, int W_E);
 	virtual void animatePathValid(vector<point> cpa);
 	virtual void defaultTileSetter();
