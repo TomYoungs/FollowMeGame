@@ -21,6 +21,7 @@ void CanvasTool::onDraw() {
 	startBtn();
 	levelCounterText();
 	drawText("0.000", 200, 405);
+	startBtnC = YELLOW;
 	EasyGraphics::onDraw();
 }
 void CanvasTool::startBtn() {
@@ -83,6 +84,7 @@ void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
 		startBtnC = GREEN;
 		defaultTileSetter();
 		startGame();
+		
 
 	}
 	 
