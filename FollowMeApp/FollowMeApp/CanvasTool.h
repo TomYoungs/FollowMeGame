@@ -10,6 +10,7 @@ public:
 	CanvasTool();
 	~CanvasTool();
 	int cx = 0, cy = 0;
+	bool playerMode = false;
 	int timerID = 0;
 	int timerCounter = 0;
 	int levelCounter = 1;
@@ -23,15 +24,16 @@ public:
 	int gridDim = 65;
 	wstring pathsArr[6][6];
 	enum direction { north, east, south, west };
-	
+	int oppositeDirection[4] = {2,3,0,1};
+
 	struct point {
 		int row;
 		int column;
 		int direction;
 	};
-	virtual void onLButtonDown(UINT nFlags, int x, int y);
+	/*virtual void onLButtonDown(UINT nFlags, int x, int y);*/
+	virtual void onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	virtual void onDraw();
-	virtual void startBtn();
 	virtual void levelCounterText();
 	virtual void startGame();
 	virtual void createNewPath(point& coords, vector<point>& cpa, int i);

@@ -15,19 +15,18 @@ void CanvasTool::onDraw() {
 	clearScreen(WHITE);
 
 	gridDrawer();
-	startBtn();
 	levelCounterText();
 	drawText("0.000", 200, 405);
 	startBtnC = YELLOW;
 	EasyGraphics::onDraw();
 }
-void CanvasTool::startBtn() {
-	setBackColour(startBtnC);
-	drawRectangle(300, 400, 100, 50, true);
-	setTextColour(BLACK);
-	setFont(20, L"Tahoma");
-	drawText("start", 315, 405);
-}
+//void CanvasTool::startBtn() {
+//	setBackColour(startBtnC);
+//	drawRectangle(300, 400, 100, 50, true);
+//	setTextColour(BLACK);
+//	setFont(20, L"Tahoma");
+//	drawText("start", 315, 405);
+//}
 void CanvasTool::levelCounterText(){
 	setBackColour(LevelCTxtC);
 	drawRectangle(300, 10, 120, 50, true);
@@ -69,24 +68,34 @@ void wait(DWORD interval)
 		//wait for a bit
 	}
 }
-void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
-{
-	cx = x;
-	cy = y;
-	if (cx > 300 && cx < 400 && cy >400 && cy < 450) //if the clear area is clicked
-	{
-
-		//setTimer(timerID, 100);
+//void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
+//{
+//	cx = x;
+//	cy = y;
+//	if (cx > 300 && cx < 400 && cy >400 && cy < 450) //if the clear area is clicked
+//	{
+//
+//	}
+//	 
+//}
+void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if (playerMode) {
+		if (nChar == 72) {
+			setBackColour(startBtnC);
+			drawRectangle(100, 100, 100, 100, true);
+		
+		}
+	}
+	else {
 		startBtnC = GREEN;
 		defaultTileSetter();
 		startGame();
-		
-
+		playerMode = true;
 	}
-	 
 }
 void CanvasTool::startGame() {
 	srand((unsigned int)time(NULL));
+
 	bool notGameOver = true;
 	point OriginGen; 
 	 OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
@@ -101,6 +110,8 @@ void CanvasTool::startGame() {
 	}
 	onDraw();
 	animatePathValid(currentPathArr);
+	clearScreen(WHITE);
+	onDraw();
 
 	levelCounter++;
 }
@@ -108,14 +119,15 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpa, int i) {
 	
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
+
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-			if (cpa[i].direction == (tileChoice+2)) {
+			if ((oppositeDirection[cpa[i].direction]) == (tileChoice)) {
 				tileChoice = rand() % 4;
 			}
 			else if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
-				
+				tileChoice = rand() % 4;
 			}
 			else if ((coords.column + 1 >= gridSize) && (tileChoice == 1)) {
 				tileChoice = rand() % 4;
@@ -184,7 +196,7 @@ void CanvasTool::animatePathValid(vector<point> cpa) {
 
 }
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
-	int solutionTime = 500;
+	int solutionTime = 2;
 	int timer;
 	int counter = 0;
 	DWORD interval = 20;
@@ -192,6 +204,7 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 
 	for (int j = 0; j < (gridDim + 2); j++) {
 		//clear asset
+		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
 		//todo: delay stuff, may be related to timer so could do that first maybe?
 		//remove
