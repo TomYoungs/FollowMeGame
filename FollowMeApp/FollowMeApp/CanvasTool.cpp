@@ -20,13 +20,6 @@ void CanvasTool::onDraw() {
 	startBtnC = YELLOW;
 	EasyGraphics::onDraw();
 }
-//void CanvasTool::startBtn() {
-//	setBackColour(startBtnC);
-//	drawRectangle(300, 400, 100, 50, true);
-//	setTextColour(BLACK);
-//	setFont(20, L"Tahoma");
-//	drawText("start", 315, 405);
-//}
 void CanvasTool::levelCounterText(){
 	setBackColour(LevelCTxtC);
 	drawRectangle(300, 10, 120, 50, true);
@@ -68,26 +61,31 @@ void wait(DWORD interval)
 		//wait for a bit
 	}
 }
-//void CanvasTool::onLButtonDown(UINT nFlags, int x, int y)
-//{
-//	cx = x;
-//	cy = y;
-//	if (cx > 300 && cx < 400 && cy >400 && cy < 450) //if the clear area is clicked
-//	{
-//
-//	}
-//	 
-//}
 void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (playerMode) {
-		if (nChar == 72) {
-			setBackColour(startBtnC);
+		drawBitmap(balloonTile.c_str(), (currentPathVec[1].column * (gridDim + 2) + 200), (currentPathVec[1].row * (gridDim + 2) + 100), gridDim, gridDim);
+		if (nChar == 38) {//arrow up
+			setBackColour(BLACK);
 			drawRectangle(100, 100, 100, 100, true);
-		
+			EasyGraphics::onDraw();
+		}
+		if (nChar == 40) {//arrow down
+			setBackColour(GREEN);
+			drawRectangle(100, 100, 100, 100, true);
+			EasyGraphics::onDraw();
+		}
+		if (nChar == 37) {//arrow left
+			setBackColour(WHITE);
+			drawRectangle(100, 100, 100, 100, true);
+			EasyGraphics::onDraw();
+		}
+		if (nChar == 39) {//arrow right
+			setBackColour(BLUE);
+			drawRectangle(100, 100, 100, 100, true);
+			EasyGraphics::onDraw();
 		}
 	}
 	else {
-		startBtnC = GREEN;
 		defaultTileSetter();
 		startGame();
 		playerMode = true;
@@ -98,24 +96,24 @@ void CanvasTool::startGame() {
 
 	bool notGameOver = true;
 	point OriginGen; 
-	 OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
-	 OriginGen.column = rand() % (4 + (gridSize - 4));
-	 OriginGen.direction = -1; //can you do this with enum?
-	vector<point> currentPathArr;
-	currentPathArr.push_back(OriginGen);
+	OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
+	OriginGen.column = rand() % (4 + (gridSize - 4));
+	OriginGen.direction = -1; //can you do this with enum?
+	currentPathVec.clear();
+	currentPathVec.push_back(OriginGen);
 	
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 	
-		createNewPath(OriginGen, currentPathArr, i);//code the next tile from the origin
+		createNewPath(OriginGen, currentPathVec, i);//code the next tile from the origin
 	}
 	onDraw();
-	animatePathValid(currentPathArr);
+	animatePathValid(currentPathVec);
 	clearScreen(WHITE);
 	onDraw();
 
 	levelCounter++;
 }
-void CanvasTool::createNewPath(point& coords, vector<point>& cpa, int i) {
+void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 	
 	int tileChoice = rand() % 4; // chooses direction N=0, E=1, S=2, W=3
 	bool invalidRnd = true;
@@ -123,7 +121,7 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpa, int i) {
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-			if ((oppositeDirection[cpa[i].direction]) == (tileChoice)) {
+			if ((oppositeDirection[cpv[i].direction]) == (tileChoice)) {
 				tileChoice = rand() % 4;
 			}
 			else if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
@@ -149,47 +147,47 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpa, int i) {
 	case north:
 		coords.row--;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpa.push_back({ coords.row,coords.column, tileChoice });
+		cpv.push_back({ coords.row,coords.column, tileChoice });
 		
 		break;
 	case east:
 		coords.column++;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpa.push_back(coords);
+		cpv.push_back(coords);
 		break;
 	case south:
 		coords.row++;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpa.push_back(coords);
+		cpv.push_back(coords);
 		break;
 	case west:
 		coords.column--;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpa.push_back(coords);
+		cpv.push_back(coords);
 		break;
 	}
 }
-void CanvasTool::animatePathValid(vector<point> cpa) {
-	//take in CPA[] and find the point to have the asset overlay for examble if the origin is at (2,1) the location
+void CanvasTool::animatePathValid(vector<point> cpv) {
+	//take in cpv[] and find the point to have the asset overlay for examble if the origin is at (2,1) the location
 	//of the asset would be (334,267) asset is 65x65 this assets x coord would incroment till it hits the next location
 	//minus 65 (334,334) minus 65 because the asset is tracked from the top left 
 	for (int i = 0; i < levelCounter + 3; i++) {//tile by tile
-		const int rowCalc = cpa[i + 1].row - cpa[i].row;
-		const int colCalc = cpa[i + 1].column - cpa[i].column;
+		const int rowCalc = cpv[i + 1].row - cpv[i].row;
+		const int colCalc = cpv[i + 1].column - cpv[i].column;
 		if (rowCalc == 0) {
 			if (colCalc == -1) {
-				animatePath(cpa[i], rowCalc, colCalc);//west
+				animatePath(cpv[i], rowCalc, colCalc);//west
 			}
 			else if (colCalc == 1) {
-				animatePath(cpa[i], rowCalc, colCalc);//east
+				animatePath(cpv[i], rowCalc, colCalc);//east
 			}
 		}
 		else if (colCalc == 0) {
 			if (rowCalc == -1) {
-				animatePath(cpa[i], rowCalc, colCalc);//north
+				animatePath(cpv[i], rowCalc, colCalc);//north
 			}
 			else if (rowCalc == 1) {
-				animatePath(cpa[i], rowCalc, colCalc);//south
+				animatePath(cpv[i], rowCalc, colCalc);//south
 			}
 		}
 	}
@@ -202,7 +200,7 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 	DWORD interval = 20;
 	DWORD start = GetTickCount();
 
-	for (int j = 0; j < (gridDim + 2); j++) {
+	for (int j = 0; j < (gridDim + 2); j = j + 4) {
 		//clear asset
 		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
@@ -214,7 +212,7 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 		EasyGraphics::onDraw();
 	}
 
-	//might need like a position counter in cpa
+	//might need like a position counter in cpv
 	//todo: could i make this function work with the player also?
 }
 

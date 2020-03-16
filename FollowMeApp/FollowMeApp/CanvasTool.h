@@ -31,7 +31,8 @@ public:
 		int column;
 		int direction;
 	};
-	/*virtual void onLButtonDown(UINT nFlags, int x, int y);*/
+	vector<point> currentPathVec;
+	
 	virtual void onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	virtual void onDraw();
 	virtual void levelCounterText();
