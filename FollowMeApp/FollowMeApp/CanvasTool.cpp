@@ -11,13 +11,24 @@ CanvasTool::~CanvasTool()
 {
 }
 
+void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if (playerMode) {
+		drawBitmap(balloonTile.c_str(), (currentPathVec[1].column * (gridDim + 2) + 200),
+			(currentPathVec[1].row * (gridDim + 2) + 100), gridDim, gridDim);
+		EasyGraphics::onDraw();
+		playerGame(nChar, currentPathVec);
+	}
+	else {
+		defaultTileSetter();
+		startGame();
+		playerMode = true;
+	}
+}
 void CanvasTool::onDraw() {
 	clearScreen(WHITE);
-
 	gridDrawer();
 	levelCounterText();
-	drawText("0.000", 200, 405);
-	startBtnC = YELLOW;
+
 	EasyGraphics::onDraw();
 }
 void CanvasTool::levelCounterText(){
@@ -28,12 +39,12 @@ void CanvasTool::levelCounterText(){
 	string levelCWord = "Level: " + to_string(levelCounter);
 	drawText(levelCWord.c_str(), 315, 15);
 }
-void CanvasTool::defaultTileSetter() {
-	
-	for (int i = 0; i < 6; ++i) {
-		for (int j = 0; j < 6; ++j) {
-			pathsArr[i][j] = defaultTile;
-		}
+void wait(DWORD interval)
+{
+	DWORD startTime = GetTickCount();
+
+	while (GetTickCount() < (startTime + interval)) {
+		//wait for a bit
 	}
 }
 void CanvasTool::gridDrawer() {
@@ -53,58 +64,31 @@ void CanvasTool::gridDrawer() {
 		}
 	}
 }
-void wait(DWORD interval)
-{
-	DWORD startTime = GetTickCount();
+void CanvasTool::defaultTileSetter() {
+	
+	for (int i = 0; i < 6; ++i) {
+		for (int j = 0; j < 6; ++j) {
+			pathsArr[i][j] = defaultTile;
+		}
+	}
+}
 
-	while (GetTickCount() < (startTime + interval)) {
-		//wait for a bit
-	}
-}
-void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if (playerMode) {
-		drawBitmap(balloonTile.c_str(), (currentPathVec[1].column * (gridDim + 2) + 200), (currentPathVec[1].row * (gridDim + 2) + 100), gridDim, gridDim);
-		if (nChar == 38) {//arrow up
-			setBackColour(BLACK);
-			drawRectangle(100, 100, 100, 100, true);
-			EasyGraphics::onDraw();
-		}
-		if (nChar == 40) {//arrow down
-			setBackColour(GREEN);
-			drawRectangle(100, 100, 100, 100, true);
-			EasyGraphics::onDraw();
-		}
-		if (nChar == 37) {//arrow left
-			setBackColour(WHITE);
-			drawRectangle(100, 100, 100, 100, true);
-			EasyGraphics::onDraw();
-		}
-		if (nChar == 39) {//arrow right
-			setBackColour(BLUE);
-			drawRectangle(100, 100, 100, 100, true);
-			EasyGraphics::onDraw();
-		}
-	}
-	else {
-		defaultTileSetter();
-		startGame();
-		playerMode = true;
-	}
-}
+//-------botSection-----------//
 void CanvasTool::startGame() {
 	srand((unsigned int)time(NULL));
 
 	bool notGameOver = true;
-	point OriginGen; 
-	OriginGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
-	OriginGen.column = rand() % (4 + (gridSize - 4));
-	OriginGen.direction = -1; //can you do this with enum?
+	point originGen; 
+	originGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
+	originGen.column = rand() % (4 + (gridSize - 4));
+	originGen.direction = -1; //todo: can you do this with enum?
+	pathsArr[originGen.row][originGen.column] = lightTile;
 	currentPathVec.clear();
-	currentPathVec.push_back(OriginGen);
+	currentPathVec.push_back(originGen);
 	
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 	
-		createNewPath(OriginGen, currentPathVec, i);//code the next tile from the origin
+		createNewPath(originGen, currentPathVec, i);//code the next tile from the origin
 	}
 	onDraw();
 	animatePathValid(currentPathVec);
@@ -215,4 +199,42 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 	//might need like a position counter in cpv
 	//todo: could i make this function work with the player also?
 }
+//-----------end--------------//
 
+//-------playerSection--------//
+void CanvasTool::playerGame(UINT nChar, vector<point>& cpv) {//todo: see if could be const
+
+	for (int i = 0; i < 4; i++) {
+		switch (nChar) {//arrowkeys
+
+		case UP:
+			if (cpv[i + 1].direction == 0) {
+				setBackColour(YELLOW);
+				drawRectangle(100, 100, 100, 100, true);
+			}
+			EasyGraphics::onDraw();
+		case DOWN:
+			if (cpv[i + 1].direction == 2) {
+				setBackColour(GREEN);
+				drawRectangle(100, 100, 100, 100, true);
+			}
+			EasyGraphics::onDraw();
+		case RIGHT:
+			if (cpv[i + 1].direction == 1) {
+				setBackColour(BLACK);
+				drawRectangle(100, 100, 100, 100, true);
+			}
+			EasyGraphics::onDraw();
+		case LEFT:
+			if (cpv[i + 1].direction == 3) {
+				setBackColour(RED);
+				drawRectangle(100, 100, 100, 100, true);
+			}
+			EasyGraphics::onDraw();
+
+		default:
+			break;
+		}
+	}
+}
+//------------end-------------//
