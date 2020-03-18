@@ -9,10 +9,6 @@ class CanvasTool :
 public:
 	CanvasTool();
 	~CanvasTool();
-	const int downArrow = 40;
-	const int rightArrow = 39;
-	const int upArrow = 38;
-	const int leftArrow = 37;
 	int cx = 0, cy = 0;
 	bool playerMode = false;
 	int timerID = 0;
@@ -28,7 +24,7 @@ public:
 	int gridDim = 65;
 	wstring pathsArr[6][6];
 	enum direction { north, east, south, west };
-	enum arrowKeys { UP = 38, DOWN = 40, RIGHT = 39, LEFT = 37};
+	enum arrowKeys { upArrow = 38, downArrow = 40, rightArrow = 39, leftArrow = 37};
 	int oppositeDirection[4] = {2,3,0,1};
 
 	struct point {
@@ -53,6 +49,7 @@ public:
 
 	//-------playerSection--------//
 	virtual void playerGame(UINT nChar, vector<point>& cpv);
+	virtual void playerAnimate(int bearing);
 	//------------end-------------//
 };
 

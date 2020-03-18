@@ -13,8 +13,8 @@ CanvasTool::~CanvasTool()
 
 void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	if (playerMode) {
-		drawBitmap(balloonTile.c_str(), (currentPathVec[1].column * (gridDim + 2) + 200),
-			(currentPathVec[1].row * (gridDim + 2) + 100), gridDim, gridDim);
+		drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),
+			(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
 		EasyGraphics::onDraw();
 		playerGame(nChar, currentPathVec);
 	}
@@ -131,7 +131,7 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 	case north:
 		coords.row--;
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpv.push_back({ coords.row,coords.column, tileChoice });
+		cpv.push_back(coords);
 		
 		break;
 	case east:
@@ -189,7 +189,6 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
 		//todo: delay stuff, may be related to timer so could do that first maybe?
-		//remove
 		for (timer = 0; timer < solutionTime; timer += interval) {
 			wait(interval);
 		}
@@ -204,37 +203,33 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 //-------playerSection--------//
 void CanvasTool::playerGame(UINT nChar, vector<point>& cpv) {//todo: see if could be const
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 1; i < levelCounter +2; i++) {
 		switch (nChar) {//arrowkeys
 
-		case UP:
-			if (cpv[i + 1].direction == 0) {
-				setBackColour(YELLOW);
-				drawRectangle(100, 100, 100, 100, true);
+		case upArrow:
+			if (cpv[i].direction == north) {
+				animatePathValid(cpv);
 			}
-			EasyGraphics::onDraw();
-		case DOWN:
-			if (cpv[i + 1].direction == 2) {
-				setBackColour(GREEN);
-				drawRectangle(100, 100, 100, 100, true);
+		case downArrow:
+			if (cpv[i].direction == south) {
+				animatePathValid(cpv);
 			}
-			EasyGraphics::onDraw();
-		case RIGHT:
-			if (cpv[i + 1].direction == 1) {
-				setBackColour(BLACK);
-				drawRectangle(100, 100, 100, 100, true);
+		case rightArrow:
+			if (cpv[i].direction == east) {
+				animatePathValid(cpv);
 			}
-			EasyGraphics::onDraw();
-		case LEFT:
-			if (cpv[i + 1].direction == 3) {
-				setBackColour(RED);
-				drawRectangle(100, 100, 100, 100, true);
+		case leftArrow:
+			if (cpv[i].direction == west) {
+				animatePathValid(cpv);
 			}
-			EasyGraphics::onDraw();
 
 		default:
+			//gameover message, highscrore sheet
 			break;
 		}
 	}
+}
+void CanvasTool::playerAnimate(int bearing) {
+	
 }
 //------------end-------------//
