@@ -12,36 +12,52 @@ CanvasTool::~CanvasTool()
 }
 
 void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
-		if (playerMode && (nChar <= 40 && nChar >= 37)) {
 
-			playerGame(nChar, currentPathVec);
-			if (gameOver) {
-				gameOverText();
-				levelCounter = 1;
-				playerMode = false;
-			}
-			else levelCounter++;
-				
+	if (nChar == 67) {
+		gridDrawer();
+	}
+	if (playerMode && (nChar <= 40 && nChar >= 37)) {
+		if ((levelCounter + 3) == playerPos) {
+			levelCounter++;
+			playerMode = false;
+			winGameText();
+			DWORD interval = 1000;
+			wait(interval);
+			pressBtn();
 
-		}
-		else if (playerMode && !(nChar < 40 && nChar > 37)) {
-			//do nothing
 		}
 		else {
+
+			playerGame(nChar, currentPathVec);
+		}
+		if (gameOver) {
+			gameOverText();
+			DWORD interval = 1000;
+			wait(interval);
+			pressBtn();
+			levelCounter = 1;
+			playerMode = false;
+		}			
+
+	}
+	else if (playerMode && !(nChar < 40 && nChar > 37)) {
+			//do nothing
+	}
+	else {
 			defaultTileSetter();
 			startGame();
-			drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),
-				(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
+			drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
 			EasyGraphics::onDraw();
 			playerMode = true;
-		}
-
+	}
 }
 void CanvasTool::onDraw() {
 	clearScreen(WHITE);
-	gridDrawer();
+	blackGridDrawer();
 	levelCounterText();
+	hintText();
 	EasyGraphics::onDraw();
+
 }
 void CanvasTool::levelCounterText(){
 	setBackColour(LevelCTxtC);
@@ -51,39 +67,22 @@ void CanvasTool::levelCounterText(){
 	string levelCWord = "Level: " + to_string(levelCounter);
 	drawText(levelCWord.c_str(), 315, 15);
 }
-void CanvasTool::gameOverText() {
-	clearScreen(WHITE);
-	setTextColour(BLACK);
-	setFont(100, L"Tahoma");
-	drawText("Game Over", 80, 200);
+void CanvasTool::hintText() {
+	setPenColour(BLACK, 3);
+	setFont(15, L"Tahoma");
+	drawText("press c to view path:", 10, 200);
+}
+void CanvasTool::pressBtn(){
 	setFont(20, L"Tahoma");
 	drawText("Press any key to restart", 200, 400);
-	
 	EasyGraphics::onDraw();
 }
-void wait(DWORD interval)
+void CanvasTool::wait(DWORD interval)
 {
 	DWORD startTime = GetTickCount();
 
 	while (GetTickCount() < (startTime + interval)) {
 		//wait for a bit
-	}
-}
-void CanvasTool::gridDrawer() {
-
-	if (levelCounter > 4) {
-		gridSize = 5;
-		gridDim = 52;
-		if (levelCounter > 9) {
-			gridDim = 43;
-			gridSize = 6;
-		}
-	}
-	
-	for (int i = 0; i < gridSize; i++) {
-		for (int j = 0; j < gridSize; j++) {
-			drawBitmap(pathsArr[j][i].c_str(), i * (gridDim + 2) + 200, j * (gridDim + 2) + 100, gridDim, gridDim);
-		}
 	}
 }
 void CanvasTool::defaultTileSetter() {
@@ -94,13 +93,25 @@ void CanvasTool::defaultTileSetter() {
 		}
 	}
 }
+void CanvasTool::blackGridDrawer() {
+	if (levelCounter > 4) {
+		gridSize = 5;
+		gridDim = 52;
+		if (levelCounter > 9) {
+			gridDim = 43;
+			gridSize = 6;
+		}
+	}
 
+	for (int i = 0; i < gridSize; i++) {
+		for (int j = 0; j < gridSize; j++) {
+			drawBitmap(L"assets\\GrayTile.bmp", i * (gridDim + 2) + 200, j * (gridDim + 2) + 100, gridDim, gridDim);
+		}
+	}
+}
 //-------botSection-----------//
 void CanvasTool::startGame() {
 	srand((unsigned int)time(NULL));
-	playerPos = 0;
-
-	bool notGameOver = true;
 	point originGen; 
 	originGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
 	originGen.column = rand() % (4 + (gridSize - 4));
@@ -119,7 +130,8 @@ void CanvasTool::startGame() {
 	onDraw();
 
 	currentPathVec[0].direction = currentPathVec[1].direction;
-	levelCounter++;
+	playerPos = 0;
+	gameOver = false;
 }
 void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 	
@@ -203,34 +215,38 @@ void CanvasTool::animatePathValid(vector<point> cpv) {
 }
 //-----------end--------------//
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
-	int solutionTime = 2;
-	DWORD interval = 20;
-	/*DWORD start = GetTickCount();*/
+	int solutionTime = 3;
+	DWORD interval = 40;
 
 	for (int j = 0; j < (gridDim + 2); j = j + 4) {
 		//clear asset
 		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
-		//todo: delay stuff, may be related to timer so could do that first maybe?
 		for (int timer = 0; timer < solutionTime; timer += interval) {
 			wait(interval);
 		}
 		EasyGraphics::onDraw();
 	}
-
-	//might need like a position counter in cpv
-	//todo: could i make this function work with the player also?
 } 
 
 //-------playerSection--------//
-void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if could be const
+void CanvasTool::gameOverText() {
+	clearScreen(WHITE);
+	setTextColour(BLACK);
+	setFont(100, L"Tahoma");
+	drawText("Game Over", 80, 200);
 
-	for (int i = 0; i < levelCounter +3; i++) {
-		
+	EasyGraphics::onDraw();
+}
+void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if could be const
+	//OutputDebugStringW(L"In Player Game\n");	
+	//	char buffer[100];
+	//	sprintf_s(buffer, "\nIn for - playerPos =  %d\nKey is: %d", playerPos, nChar);
+	//	OutputDebugStringA(buffer);
 		switch (nChar) {//arrowkeys
 
 		case upArrow:
-			if (cpv[playerPos +1].direction == north) {
+			if (cpv[playerPos + 1].direction == north) {				
 				animatePath(cpv[playerPos], -1, 0);
 			}
 			else {
@@ -265,20 +281,34 @@ void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if
 			gameOver = true;
 			break;
 		}
-		if (gameOver)
-		{
-			break;
-		}
-		if (cpv[playerPos + 1].direction != cpv[playerPos + 2].direction) {
-			playerPos++;
-			int solutionTime = 5000;
-			DWORD interval = 20;
-			for (int timer = 0; timer < solutionTime; timer += interval) {
-				wait(interval);
-			}
-		}
 		playerPos++;
+}
+void CanvasTool::winGameText() {
+	clearScreen(WHITE);
+	setTextColour(BLACK);
+	setFont(50, L"Tahoma");
+	drawText("Level Complete", 80, 200);
 
+	EasyGraphics::onDraw();
+}
+void CanvasTool::gridDrawer() {
+
+	if (levelCounter > 4) {
+		gridSize = 5;
+		gridDim = 52;
+		if (levelCounter > 9) {
+			gridDim = 43;
+			gridSize = 6;
+		}
 	}
+	
+	for (int i = 0; i < gridSize; i++) {
+		for (int j = 0; j < gridSize; j++) {
+			drawBitmap(pathsArr[j][i].c_str(), i * (gridDim + 2) + 200, j * (gridDim + 2) + 100, gridDim, gridDim);
+		}
+	}
+	drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200), (currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
+	EasyGraphics::onDraw();
 
 }
+//-----------end--------------//
