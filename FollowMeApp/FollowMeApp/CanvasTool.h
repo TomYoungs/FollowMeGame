@@ -39,19 +39,25 @@ public:
 	virtual void onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	virtual void onDraw();
 	virtual void levelCounterText();
+	virtual void hintText();
 	virtual void defaultTileSetter();
-	virtual void gridDrawer();
+	virtual void wait(DWORD interval);
+	virtual void animatePathValid(vector<point> cpa);
+	virtual void blackGridDrawer();
 
 	//-------botSection-----------//
+
 	virtual void startGame();
 	virtual void createNewPath(point& coords, vector<point>& cpa, int i);
 	virtual void animatePath(point coords, int N_S, int W_E);
 	//-----------end--------------//
-	virtual void animatePathValid(vector<point> cpa);
 
 	//-------playerSection--------//
-	virtual void playerGame(UINT nChar, const vector<point> cpv);
+	virtual void gridDrawer();
 	virtual void gameOverText();
+	virtual void playerGame(UINT nChar, const vector<point> cpv);
+	virtual void pressBtn();
+	virtual void winGameText();
 	//------------end-------------//
 };
 
