@@ -12,23 +12,35 @@ CanvasTool::~CanvasTool()
 }
 
 void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if (playerMode) {
-		drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),
-			(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
-		EasyGraphics::onDraw();
-		playerGame(nChar, currentPathVec);
-	}
-	else {
-		defaultTileSetter();
-		startGame();
-		playerMode = true;
-	}
+		if (playerMode && (nChar <= 40 && nChar >= 37)) {
+
+			playerGame(nChar, currentPathVec);
+			if (gameOver) {
+				gameOverText();
+				levelCounter = 1;
+				playerMode = false;
+			}
+			else levelCounter++;
+				
+
+		}
+		else if (playerMode && !(nChar < 40 && nChar > 37)) {
+			//do nothing
+		}
+		else {
+			defaultTileSetter();
+			startGame();
+			drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),
+				(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
+			EasyGraphics::onDraw();
+			playerMode = true;
+		}
+
 }
 void CanvasTool::onDraw() {
 	clearScreen(WHITE);
 	gridDrawer();
 	levelCounterText();
-
 	EasyGraphics::onDraw();
 }
 void CanvasTool::levelCounterText(){
@@ -38,6 +50,16 @@ void CanvasTool::levelCounterText(){
 	setFont(20, L"Tahoma");
 	string levelCWord = "Level: " + to_string(levelCounter);
 	drawText(levelCWord.c_str(), 315, 15);
+}
+void CanvasTool::gameOverText() {
+	clearScreen(WHITE);
+	setTextColour(BLACK);
+	setFont(100, L"Tahoma");
+	drawText("Game Over", 80, 200);
+	setFont(20, L"Tahoma");
+	drawText("Press any key to restart", 200, 400);
+	
+	EasyGraphics::onDraw();
 }
 void wait(DWORD interval)
 {
@@ -76,6 +98,7 @@ void CanvasTool::defaultTileSetter() {
 //-------botSection-----------//
 void CanvasTool::startGame() {
 	srand((unsigned int)time(NULL));
+	playerPos = 0;
 
 	bool notGameOver = true;
 	point originGen; 
@@ -95,6 +118,7 @@ void CanvasTool::startGame() {
 	clearScreen(WHITE);
 	onDraw();
 
+	currentPathVec[0].direction = currentPathVec[1].direction;
 	levelCounter++;
 }
 void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
@@ -177,19 +201,18 @@ void CanvasTool::animatePathValid(vector<point> cpv) {
 	}
 
 }
+//-----------end--------------//
 void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 	int solutionTime = 2;
-	int timer;
-	int counter = 0;
 	DWORD interval = 20;
-	DWORD start = GetTickCount();
+	/*DWORD start = GetTickCount();*/
 
 	for (int j = 0; j < (gridDim + 2); j = j + 4) {
 		//clear asset
 		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
 		//todo: delay stuff, may be related to timer so could do that first maybe?
-		for (timer = 0; timer < solutionTime; timer += interval) {
+		for (int timer = 0; timer < solutionTime; timer += interval) {
 			wait(interval);
 		}
 		EasyGraphics::onDraw();
@@ -197,39 +220,65 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 
 	//might need like a position counter in cpv
 	//todo: could i make this function work with the player also?
-}
-//-----------end--------------//
+} 
 
 //-------playerSection--------//
-void CanvasTool::playerGame(UINT nChar, vector<point>& cpv) {//todo: see if could be const
+void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if could be const
 
-	for (int i = 1; i < levelCounter +2; i++) {
+	for (int i = 0; i < levelCounter +3; i++) {
+		
 		switch (nChar) {//arrowkeys
 
 		case upArrow:
-			if (cpv[i].direction == north) {
-				animatePathValid(cpv);
+			if (cpv[playerPos +1].direction == north) {
+				animatePath(cpv[playerPos], -1, 0);
 			}
+			else {
+				gameOver = true;
+			}
+			break;
 		case downArrow:
-			if (cpv[i].direction == south) {
-				animatePathValid(cpv);
+			if (cpv[playerPos + 1].direction == south) {
+				animatePath(cpv[playerPos], 1, 0);
 			}
+			else {
+				gameOver = true;
+			}
+			break;
 		case rightArrow:
-			if (cpv[i].direction == east) {
-				animatePathValid(cpv);
+			if (cpv[playerPos + 1].direction == east) {
+				animatePath(cpv[playerPos], 0, 1);
 			}
+			else {
+				gameOver = true;
+			}
+			break;
 		case leftArrow:
-			if (cpv[i].direction == west) {
-				animatePathValid(cpv);
+			if (cpv[playerPos + 1].direction == west) {
+				animatePath(cpv[playerPos], 0, -1);
 			}
-
+			else {
+				gameOver = true;
+			}
+			break;
 		default:
-			//gameover message, highscrore sheet
+			gameOver = true;
 			break;
 		}
+		if (gameOver)
+		{
+			break;
+		}
+		if (cpv[playerPos + 1].direction != cpv[playerPos + 2].direction) {
+			playerPos++;
+			int solutionTime = 5000;
+			DWORD interval = 20;
+			for (int timer = 0; timer < solutionTime; timer += interval) {
+				wait(interval);
+			}
+		}
+		playerPos++;
+
 	}
+
 }
-void CanvasTool::playerAnimate(int bearing) {
-	
-}
-//------------end-------------//

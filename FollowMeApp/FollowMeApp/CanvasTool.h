@@ -15,6 +15,8 @@ public:
 	int timerCounter = 0;
 	int levelCounter = 1;
 	int gridSize = 4;
+	bool gameOver = false;
+	int playerPos = 0;
 	const wstring defaultTile = L"assets\\GrayTile.bmp";  //todo: save as 0 and 1s and have an if statement to draw the paths based on which
 	const wstring lightTile = L"assets\\LightTile.bmp";
 	const wstring startTile = L"assets\\start.bmp";
@@ -44,12 +46,12 @@ public:
 	virtual void startGame();
 	virtual void createNewPath(point& coords, vector<point>& cpa, int i);
 	virtual void animatePath(point coords, int N_S, int W_E);
-	virtual void animatePathValid(vector<point> cpa);
 	//-----------end--------------//
+	virtual void animatePathValid(vector<point> cpa);
 
 	//-------playerSection--------//
-	virtual void playerGame(UINT nChar, vector<point>& cpv);
-	virtual void playerAnimate(int bearing);
+	virtual void playerGame(UINT nChar, const vector<point> cpv);
+	virtual void gameOverText();
 	//------------end-------------//
 };
 
