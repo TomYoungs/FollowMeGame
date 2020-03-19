@@ -13,45 +13,45 @@ CanvasTool::~CanvasTool()
 
 void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
-	if (nChar == 67) {
+	if (nChar == 67 && playerMode) {//67 "c" shows the user the path if they can't remember it
 		gridDrawer();
 	}
-	if (playerMode && (nChar <= 40 && nChar >= 37)) {
-		if ((levelCounter + 3) == playerPos) {
-			levelCounter++;
-			playerMode = false;
+	else if (playerMode && (nChar <= 40 && nChar >= 37)) {//arrow key values are between 37 and 40, also playermode must be true which means that bot mode has already happened
+		if ((levelCounter + 3) == playerPos) {//win condition: when player pos = the length of the vector the game has been won
+			levelCounter++;//move to next level
+			playerMode = false;//do back to bot mode
 			winGameText();
 			DWORD interval = 1000;
-			wait(interval);
+			wait(interval);//wait a few seconds on win screen
 			pressBtn();
 
 		}
 		else {
 
-			playerGame(nChar, currentPathVec);
+			playerGame(nChar, currentPathVec);//start player game
 		}
-		if (gameOver) {
+		if (gameOver) {//game over screen
 			gameOverText();
 			DWORD interval = 1000;
-			wait(interval);
+			wait(interval);//wait on gameover screen for a few seconds
 			pressBtn();
-			levelCounter = 1;
-			playerMode = false;
+			levelCounter = 1;//restart from level 1
+			playerMode = false;//change to bot game
 		}			
 
 	}
-	else if (playerMode && !(nChar < 40 && nChar > 37)) {
+	else if (playerMode && !(nChar < 40 && nChar > 37)) {//invalid input during player game (not arrow keys)
 			//do nothing
 	}
 	else {
-			defaultTileSetter();
-			startGame();
+			defaultTileSetter();//set all tiles to default grey
+			startGame();//start bot game
 			drawBitmap(balloonTile.c_str(), (currentPathVec[0].column * (gridDim + 2) + 200),(currentPathVec[0].row * (gridDim + 2) + 100), gridDim, gridDim);
-			EasyGraphics::onDraw();
-			playerMode = true;
+			EasyGraphics::onDraw();//draw origin tile
+			playerMode = true;//start player mode
 	}
 }
-void CanvasTool::onDraw() {
+void CanvasTool::onDraw() {//default screen with grid(4x4 to 6x6) levelcounter and hint text
 	clearScreen(WHITE);
 	blackGridDrawer();
 	levelCounterText();
@@ -59,7 +59,7 @@ void CanvasTool::onDraw() {
 	EasyGraphics::onDraw();
 
 }
-void CanvasTool::levelCounterText(){
+void CanvasTool::levelCounterText(){//displays what level the user is on
 	setBackColour(LevelCTxtC);
 	drawRectangle(300, 10, 120, 50, true);
 	setTextColour(BLACK);
@@ -67,17 +67,17 @@ void CanvasTool::levelCounterText(){
 	string levelCWord = "Level: " + to_string(levelCounter);
 	drawText(levelCWord.c_str(), 315, 15);
 }
-void CanvasTool::hintText() {
+void CanvasTool::hintText() {//tells about c hint key
 	setPenColour(BLACK, 3);
 	setFont(15, L"Tahoma");
 	drawText("press c to view path:", 10, 200);
 }
-void CanvasTool::pressBtn(){
+void CanvasTool::pressBtn(){//plays on win and game over screens
 	setFont(20, L"Tahoma");
 	drawText("Press any key to restart", 200, 400);
 	EasyGraphics::onDraw();
 }
-void CanvasTool::wait(DWORD interval)
+void CanvasTool::wait(DWORD interval)//wait a given amount of time
 {
 	DWORD startTime = GetTickCount();
 
@@ -85,7 +85,7 @@ void CanvasTool::wait(DWORD interval)
 		//wait for a bit
 	}
 }
-void CanvasTool::defaultTileSetter() {
+void CanvasTool::defaultTileSetter() {//sets all tiles to be the default grey
 	
 	for (int i = 0; i < 6; ++i) {
 		for (int j = 0; j < 6; ++j) {
@@ -93,7 +93,7 @@ void CanvasTool::defaultTileSetter() {
 		}
 	}
 }
-void CanvasTool::blackGridDrawer() {
+void CanvasTool::blackGridDrawer() {//ignores the light grey tiles that are stored during the path generation
 	if (levelCounter > 4) {
 		gridSize = 5;
 		gridDim = 52;
@@ -112,25 +112,26 @@ void CanvasTool::blackGridDrawer() {
 //-------botSection-----------//
 void CanvasTool::startGame() {
 	srand((unsigned int)time(NULL));
-	point originGen; 
-	originGen.row = rand() % (4 + (gridSize - 4));//random number in range, as the grid increases in size this bit of maths adds extra to the range.
-	originGen.column = rand() % (4 + (gridSize - 4));
-	originGen.direction = -1; //todo: can you do this with enum?
+
+	point originGen; //generate a new point value just for storing the origin
+	originGen.row = rand() % (gridSize);//random number in range, range changes depending on the grid size
+	originGen.column = rand() % (gridSize);
+	originGen.direction = -1;//temp direction value
 	pathsArr[originGen.row][originGen.column] = lightTile;
-	currentPathVec.clear();
-	currentPathVec.push_back(originGen);
+	currentPathVec.clear();//clear to make sure it dosen't rememeber anything between rounds
+	currentPathVec.push_back(originGen);//push origin onto vector
 	
 	for (int i = 0; i < (levelCounter+3); i++) {//loop through tile generator
 	
 		createNewPath(originGen, currentPathVec, i);//code the next tile from the origin
 	}
 	onDraw();
-	animatePathValid(currentPathVec);
+	animatePathValid(currentPathVec);//draw path
 	clearScreen(WHITE);
-	onDraw();
+	onDraw();//after the ai path is drawn it is overwritten
 
-	currentPathVec[0].direction = currentPathVec[1].direction;
-	playerPos = 0;
+	currentPathVec[0].direction = currentPathVec[1].direction;//when doing the player mode it is needed that the origin value has the same direction as the next
+	playerPos = 0;//resets the index for players position in the vector before it is run
 	gameOver = false;
 }
 void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
@@ -141,7 +142,7 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 	
 	//todo: can i make this more efficient/ compact?
 	while (invalidRnd) {//validation loop checks if the direction is out of bounds
-			if ((oppositeDirection[cpv[i].direction]) == (tileChoice)) {
+			if ((oppositeDirection[cpv[i].direction]) == (tileChoice)) {//special validation to check the immediatly before while generating the path
 				tileChoice = rand() % 4;
 			}
 			else if ((coords.row - 1 < 0) && (tileChoice == 0)) {//if row -1 < 0 means that it is outside the bounds of the array so re-roll
@@ -161,13 +162,13 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 			}
 		
 		}
-	coords.direction = tileChoice;
+	coords.direction = tileChoice;//save the direction 
 
 	switch (tileChoice) {
 	case north:
-		coords.row--;
+		coords.row--;//to go north you decrement the row value
 		pathsArr[coords.row][coords.column] = lightTile;
-		cpv.push_back(coords);
+		cpv.push_back(coords);//add new value to vector
 		
 		break;
 	case east:
@@ -188,11 +189,11 @@ void CanvasTool::createNewPath(point& coords, vector<point>& cpv, int i) {
 	}
 }
 void CanvasTool::animatePathValid(vector<point> cpv) {
-	//take in cpv[] and find the point to have the asset overlay for examble if the origin is at (2,1) the location
-	//of the asset would be (334,267) asset is 65x65 this assets x coord would incroment till it hits the next location
+	//take in cpv[] and find the point to have the asset overlay for example if the origin is at (2,1) the location
+	//of the asset would be (334,267) asset is 65x65 this asset's x coord would incroment till it hits the next location
 	//minus 65 (334,334) minus 65 because the asset is tracked from the top left 
 	for (int i = 0; i < levelCounter + 3; i++) {//tile by tile
-		const int rowCalc = cpv[i + 1].row - cpv[i].row;
+		const int rowCalc = cpv[i + 1].row - cpv[i].row;//the difference is used so its animated in the right direction
 		const int colCalc = cpv[i + 1].column - cpv[i].column;
 		if (rowCalc == 0) {
 			if (colCalc == -1) {
@@ -218,10 +219,10 @@ void CanvasTool::animatePath(const point coords, int N_S, int W_E) {
 	int solutionTime = 3;
 	DWORD interval = 40;
 
-	for (int j = 0; j < (gridDim + 2); j = j + 4) {
-		//clear asset
-		
+	for (int j = 0; j < (gridDim + 2); j = j + 4) {//keep drawing frames till you hit the next one (gridDim) the +2 accounts for the border between tiles		
 		drawBitmap(balloonTile.c_str(), (coords.column * (gridDim+2) + 200) + j * W_E , (coords.row * (gridDim+2) + 100) + j * N_S, gridDim, gridDim);
+		//^ animate tile by tile so take in a single vector element (coords) * it by the grid dimention (+2 margin) this will give it its size then add 200 so the grid is in the middle of the page 
+		//^ j is the thing that incroments to give it its motion, the N_S W_E is gonna be -1, 0 or 1 this moves it in the right direction if there is no movement it multiplies by 0 which would make no change
 		for (int timer = 0; timer < solutionTime; timer += interval) {
 			wait(interval);
 		}
@@ -239,18 +240,14 @@ void CanvasTool::gameOverText() {
 	EasyGraphics::onDraw();
 }
 void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if could be const
-	//OutputDebugStringW(L"In Player Game\n");	
-	//	char buffer[100];
-	//	sprintf_s(buffer, "\nIn for - playerPos =  %d\nKey is: %d", playerPos, nChar);
-	//	OutputDebugStringA(buffer);
 		switch (nChar) {//arrowkeys
 
 		case upArrow:
-			if (cpv[playerPos + 1].direction == north) {				
-				animatePath(cpv[playerPos], -1, 0);
+			if (cpv[playerPos + 1].direction == north) {//checks that the arrow key pressed is equal to the direction of the next tile				
+				animatePath(cpv[playerPos], -1, 0);//animate a tile movement
 			}
 			else {
-				gameOver = true;
+				gameOver = true;//if arrow key is wrong gameover
 			}
 			break;
 		case downArrow:
@@ -281,7 +278,7 @@ void CanvasTool::playerGame(UINT nChar, const vector<point> cpv) {//todo: see if
 			gameOver = true;
 			break;
 		}
-		playerPos++;
+		playerPos++;//incroment the postion that the player is in the vector as in they moved a tile after this function has been finished
 }
 void CanvasTool::winGameText() {
 	clearScreen(WHITE);
@@ -291,7 +288,7 @@ void CanvasTool::winGameText() {
 
 	EasyGraphics::onDraw();
 }
-void CanvasTool::gridDrawer() {
+void CanvasTool::gridDrawer() {//this is the true grid drawer that shows all the tiles grey and lightgrey
 
 	if (levelCounter > 4) {
 		gridSize = 5;
