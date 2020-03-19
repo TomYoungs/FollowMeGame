@@ -36,6 +36,8 @@ void CanvasTool::onKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			wait(interval);//wait on gameover screen for a few seconds
 			pressBtn();
 			levelCounter = 1;//restart from level 1
+			gridSize = 4;//reset grid size
+			gridDim = 65;//reset grid dimentions
 			playerMode = false;//change to bot game
 		}			
 
@@ -60,7 +62,7 @@ void CanvasTool::onDraw() {//default screen with grid(4x4 to 6x6) levelcounter a
 
 }
 void CanvasTool::levelCounterText(){//displays what level the user is on
-	setBackColour(LevelCTxtC);
+	setBackColour(YELLOW);
 	drawRectangle(300, 10, 120, 50, true);
 	setTextColour(BLACK);
 	setFont(20, L"Tahoma");
@@ -94,12 +96,12 @@ void CanvasTool::defaultTileSetter() {//sets all tiles to be the default grey
 	}
 }
 void CanvasTool::blackGridDrawer() {//ignores the light grey tiles that are stored during the path generation
-	if (levelCounter > 4) {
+	if (levelCounter > 4) {//sets the grid size based of level
 		gridSize = 5;
 		gridDim = 52;
 		if (levelCounter > 9) {
-			gridDim = 43;
 			gridSize = 6;
+			gridDim = 43;
 		}
 	}
 
