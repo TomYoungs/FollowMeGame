@@ -15,19 +15,19 @@ public:
 	int timerCounter = 0;
 	int levelCounter = 1;
 	int gridSize = 4;
+	int gridDim = 65;
 	bool gameOver = false;
 	int playerPos = 0;
 	const wstring defaultTile = L"assets\\GrayTile.bmp";  //todo: save as 0 and 1s and have an if statement to draw the paths based on which
 	const wstring lightTile = L"assets\\LightTile.bmp";
 	const wstring startTile = L"assets\\start.bmp";
 	const wstring balloonTile = L"assets\\hotAirBalloon.bmp";
-	int startBtnC = YELLOW;
-	int LevelCTxtC = YELLOW;
-	int gridDim = 65;
 	wstring pathsArr[6][6];
+
 	enum direction { north, east, south, west };
-	enum arrowKeys { upArrow = 38, downArrow = 40, rightArrow = 39, leftArrow = 37};
 	int oppositeDirection[4] = {2,3,0,1};
+
+	enum arrowKeys { upArrow = 38, downArrow = 40, rightArrow = 39, leftArrow = 37};
 
 	struct point {
 		int row;
